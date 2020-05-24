@@ -1,3 +1,5 @@
+
+<div class="list">
 <?php echo validation_errors(); ?>
 <?php if(isset($error)):?>
     <?php echo $error; ?>
@@ -10,6 +12,8 @@
 <?php echo form_input('description',set_value('description',''), ['placeholder' => 'Leírás']); ?>
 <br/>
 <?php echo form_input('price',set_value('price',''),['placeholder' => 'Ár']); ?>
+<br/>
+<?php echo form_input('product_code',set_value('product_code',''),['placeholder' => 'Termék kód']); ?>
 <br/>
 
 <?php 

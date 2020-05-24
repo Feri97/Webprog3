@@ -9,16 +9,24 @@ class Products extends CI_Controller{
     }
     
     public function index(){
-       $records = $this->products_model->get_list(); 
+        $records = $this->products_model->get_list(); 
 
-       $view_params = [
+        $view_params = [
            'products'  =>  $records
-       ];
-       $this->load->helper('url');
-       $this->load->view('products/list', $view_params);
+        ];
+        $this->load->helper('url');
+        $this->load->view('_header');
+        if($this->session->userdata('username')){
+            $this->load->view('products/list', $view_params);
+        }
+        elseif($this->session->userdata('admin')){
+            $this->load->view('products/adminlist', $view_params);
+        }
     }
     
     public function insert(){
+        $this->load->helper('url');
+        $this->load->view('_header');
         if($this->input->post('submit')){
 
             $this->load->library('form_validation');
@@ -26,6 +34,7 @@ class Products extends CI_Controller{
             $this->form_validation->set_rules('name','terméknév','required');
             $this->form_validation->set_rules('description','leírás','required|min_length[10]|max_length[255]');
             $this->form_validation->set_rules('price','ár','required');
+            $this->form_validation->set_rules('product_code','termék kód','required');
 
             $upload_config['allowed_types'] = 'jpg|jpeg|png';
             $upload_config['max_size'] = 2355;
@@ -33,7 +42,7 @@ class Products extends CI_Controller{
             $upload_config['min_width'] = 250;
             
             $upload_config['upload_path'] = './uploads/img/products/';
-            $upload_config['file_name'] = $this->input->post('id');
+            $upload_config['file_name'] = $this->input->post('product_code');
             $upload_config['file_ext_tolower'] = TRUE;
             $upload_config['overwrite'] = FALSE;
 
@@ -52,6 +61,7 @@ class Products extends CI_Controller{
                     $this->products_model->insert($this->input->post('name'),
                     $this->input->post('description'),
                     $this->input->post('price'),
+                    $this->input->post('product_code'),
                     $img);
 
                     $this->load->helper('url');
@@ -105,6 +115,7 @@ class Products extends CI_Controller{
             ];
 
             $this->load->helper('form');
+            $this->load->view('_header');
             $this->load->view('products/edit',$view_params);
         }
             
@@ -123,22 +134,23 @@ class Products extends CI_Controller{
         $this->load->helper('url');
         redirect(base_url('products'));
     }
-    public function profile($price = NULL){
-        if($price== NULL){
+    public function profile($id = NULL){
+        if($id== NULL){
             show_error('Hiányzó rekord azonosító!');
         }
 
 
-        if($price == NULL){
+        if($id == NULL){
             show_error('Ilyen azonosítóval nincs rekord!');
         } 
         $this->load->helper('form');
 
-        $record = $this->products_model->select_by_price($price);
+        $record = $this->products_model->select_by_id($id);
             $view_params = [
                 'prod'  =>  $record
             ];
             $this->load->helper('url');
+            $this->load->view('_header');
             $this->load->view('products/profile', $view_params);
 
     }

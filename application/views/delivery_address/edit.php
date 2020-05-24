@@ -1,3 +1,13 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>/css/bootstrap.css">
+    <title>Products</title>
+</head>
+<body class="userbground">
+<div class="user2">
+<div class="list">
 <?php echo validation_errors(); ?>
 <?php echo form_open(); ?>
 

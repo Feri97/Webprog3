@@ -3,6 +3,7 @@
 class File_upload extends CI_Controller{
     public function __construct(){
         parent::__construct();
+        $this->load->model('products_model');
     }
     
     public function index(){
@@ -14,9 +15,12 @@ class File_upload extends CI_Controller{
             $upload_config['min_height'] = 250;
             $upload_config['min_width'] = 250;
 
+            $records = $this->products_model->get_new_id(); 
+
             $upload_config['upload_path'] = './uploads/img/products';
             $upload_config['file_ext_tolower'] = TRUE; 
             $upload_config['overwrite'] = FALSE; 
+            $upload_config['file_name'] = $records['id']+1;
 
             $this->load->library('upload');
             $this->upload->initialize($upload_config);

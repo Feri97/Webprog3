@@ -17,9 +17,12 @@ class Delivery_address_model extends CI_Model{
         return $result;
     }
     
-    public function update($id, $name, $postal_code){
+    public function update($id, $city, $postal_code, $address, $phone_number, $name){
         $record = [
+            'city'  =>  $city,
             'postal_code'  =>  $postal_code,
+            'address'  =>  $address,
+            'phone_number'  =>  $phone_number,
             'name'  =>  $name
         ];
         $this->db->where('id',$id);
@@ -35,9 +38,12 @@ class Delivery_address_model extends CI_Model{
     }
     
     
-    public function insert($postal_code, $name){
+    public function insert($city, $postal_code, $address, $phone_number, $name){
         $record = [
+            'city'  =>  $city,
             'postal_code'  =>  $postal_code,
+            'address'  =>  $address,
+            'phone_number'  =>  $phone_number,
             'name'  =>  $name
         ];
         

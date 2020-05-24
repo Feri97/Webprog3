@@ -1,5 +1,15 @@
-<?php echo anchor(base_url('cities/insert'),'Hozzáadás'); ?>
-<?php if($cities == NULL || empty($cities)): ?>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>/css/bootstrap.css">
+    <title>Products</title>
+</head>
+<body class="userbground">
+<div class="user2">
+<div class="list">
+<?php echo anchor(base_url('delivery_address/insert'),'Hozzáadás'); ?>
+<?php if($delivery_address == NULL || empty($delivery_address)): ?>
     <p>Nincs rögzítve város!</p>
 <?php else: ?>
     <table>
@@ -13,14 +23,14 @@
         </thead>
         
         <tbody>
-            <?php foreach($cities as &$cts): ?>
+            <?php foreach($delivery_address as &$addr): ?>
             <tr>
-                <td><?=$cts->id?></td>
-                <td><?=$cts->postal_code?></td>
-                <td><?=$cts->name?></td>
+                <td><?=$addr->id?></td>
+                <td><?=$addr->postal_code?></td>
+                <td><?=$addr->name?></td>
                 <td>
-                    <?php echo anchor(base_url('cities/edit/'.$cts->id),'Módosítás');?>
-                    <?php echo anchor(base_url('cities/delete/'.$cts->id),'Törlés');?>
+                    <?php echo anchor(base_url('delivery_address/edit/'.$addr->id),'Módosítás');?>
+                    <?php echo anchor(base_url('delivery_address/delete/'.$addr->id),'Törlés');?>
                 </td>
             </tr>
             <?php endforeach; ?>

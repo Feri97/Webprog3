@@ -1,5 +1,7 @@
+
+<div class="list">
 <?php echo form_open(); ?>
-<h1><?php echo $prod->name.form_label(' termék adatlapja'); ?></h1>
+<h1><?php echo $prod->name ?></h1>
 <br/>
 <br/>
 <img src="<?php echo base_url()?><?php echo $prod->img?>">
@@ -25,9 +27,8 @@
                 <td>Leírás:</td>
                 <td><?=$prod->description?></td>
             </tr>
-            <tr>
-                <td>Fájlnév:</td>
-                <td><?=$prod->id?></td>
-            </tr>
         </tbody>
     </table>
+
+    
+    <?php echo anchor(base_url('user/add_to_cart/'.$prod->id),'Kosárba');?>
