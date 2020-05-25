@@ -22,41 +22,45 @@ class Admin extends CI_Controller{
             $this->form_validation->set_rules('password','Jelszó','trim|required');
 
             if($this->form_validation->run() == TRUE){
-                $this->load->helper('form');
-                
-                if($this->admin_model->login($this->input->post('username'),$this->input->post('password')) == TRUE){
-                    
+                $data = $this->admin_model->login($this->input->post('username'));
+                if($data!=null){
+                    $hash = $data->password;
+                if(password_verify($this->input->post('password'), $hash)==true){
+                                        
                     $this->load->library('session');
                     $this->session->set_userdata('admin','username');
-                    
-                    $this->load->helper('url');
+
                     redirect(base_url('products'));
                 }else{
-                    echo"Helytelen felhasználónév vagy jelszó";
+                    $view_params = [
+                        'error' =>  'Helytelen jelszó'
+                    ];
+                    $this->load->view('admin/adminlogin', $view_params);
                 }
-                   
-                        
-                
-            } else{
-                $this->load->helper('url');
-                $this->load->helper('form');
-                $this->load->view('admin/adminlogin');
+            }else{
+                $view_params = [
+                    'error' =>  'Helytelen adminisztrátor név'
+                ];
+                $this->load->view('admin/adminlogin', $view_params);
             }
 
         } else{
-            $this->load->helper('form');
             $this->load->view('admin/adminlogin');
         }
+        } else{
+            $this->load->view('user/login', [ 'error' => '']);
+        }
+        $this->load->view('_footer');
     }
 
     public function logout(){
         $this->session->unset_userdata('admin');
         $this->session->sess_destroy();
         $this->load->helper('url');
-        redirect(base_url('admin/adminlogin'));
+        redirect(base_url('admin/login'));
     }
 
-    public function listofusers(){
+    public function userlist(){
         $this->load->helper('url');
         $this->load->helper('form');
         $this->load->view('_header');
@@ -64,9 +68,34 @@ class Admin extends CI_Controller{
         $view_params = [
             'users'  =>  $records
         ];
-        $this->load->view('admin/listofusers', $view_params);
+        $this->load->view('admin/userlist', $view_params);
+        $this->load->view('_footer');
     }
+    public function userprofile($id = NULL){
+        $this->load->helper('url');
+        $this->load->helper('form');
+        $this->load->view('_header');
+        
+        if($id== NULL){
+            show_error('Hiányzó user azonosító!');
+        }
+        if($id == NULL){
+            show_error('Ilyen azonosítóval nincs user!');
+        }
 
-
+        $record = $this->admin_model->select_user_by_id($id);
+            $view_params = [
+                'user'  =>  $record
+            ];
+        $this->load->view('admin/userprofile', $view_params);
+        $this->load->view('_footer');
+    }
+    public function read_file(){
+        $this->load->helper('url');
+        $this->load->helper('form');
+        $this->load->view('_header');
+        $this->load->view('admin/readfile');
+        $this->load->view('_footer');
+    }
 
 }

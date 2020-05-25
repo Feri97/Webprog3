@@ -22,10 +22,12 @@ class Products extends CI_Controller{
         elseif($this->session->userdata('admin')){
             $this->load->view('products/adminlist', $view_params);
         }
+        $this->load->view('_footer');
     }
     
     public function insert(){
         $this->load->helper('url');
+        $this->load->helper('form');
         $this->load->view('_header');
         if($this->input->post('submit')){
 
@@ -64,28 +66,28 @@ class Products extends CI_Controller{
                     $this->input->post('product_code'),
                     $img);
 
-                    $this->load->helper('url');
                     redirect(base_url('products'));
                 }else{
                     $view_params = [
                         'error' =>  $this->upload->display_errors()
                     ];
-                    $this->load->helper('form');
                     $this->load->view('products/insert', $view_params);
                 }
             }
             else{
-                $this->load->helper('form');
                 $this->load->view('products/insert');
             }
         }
         else{
-            $this->load->helper('form');
             $this->load->view('products/insert', [ 'error' => '']);
         }
+        $this->load->view('_footer');
     }
     
     public function edit($id = NULL){  
+        $this->load->helper('url');
+        $this->load->helper('form');
+        $this->load->view('_header');
         if($id == NULL){
             show_error('A szerkesztéshez hiányzik az id!');
         }    
@@ -113,11 +115,9 @@ class Products extends CI_Controller{
             $view_params = [
                 'prod'    =>  $record
             ];
-
-            $this->load->helper('form');
-            $this->load->view('_header');
             $this->load->view('products/edit',$view_params);
         }
+        $this->load->view('_footer');
             
     }
     public function delete($id = NULL){
@@ -135,6 +135,9 @@ class Products extends CI_Controller{
         redirect(base_url('products'));
     }
     public function profile($id = NULL){
+        $this->load->helper('url');
+        $this->load->helper('form');
+        $this->load->view('_header');
         if($id== NULL){
             show_error('Hiányzó rekord azonosító!');
         }
@@ -149,9 +152,8 @@ class Products extends CI_Controller{
             $view_params = [
                 'prod'  =>  $record
             ];
-            $this->load->helper('url');
-            $this->load->view('_header');
-            $this->load->view('products/profile', $view_params);
+        $this->load->view('products/profile', $view_params);
+        $this->load->view('_footer');
 
     }
 }

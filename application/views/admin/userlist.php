@@ -1,14 +1,16 @@
-<div class="list">
+<?php if($this->session->userdata('admin')): ?>
+<div class="userlist">
 <?php if($users == NULL || empty($users)): ?>
-    <p>Nincs regisztrálva egyetlen user sem</p>
+    <p>Nincs regisztrált user</p>
 <?php else: ?>
     <table>
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Email</th>
-                <th>Username</th>
-                <th>Password</th>
+                <th>E-mail</th>
+                <th>Felhasználó név</th>
+                <th>Jelszó</th>
+                <th>Műveletek</th>
             </tr>
         </thead>
         
@@ -17,7 +19,7 @@
             <tr>
                 <td><?=$user->id?></td>
                 <td><?=$user->email?></td>
-                <td><?php echo anchor(base_url('user/user_profile/'.$user->id), $user->username);?>
+                <td><?php echo anchor(base_url('admin/userprofile/'.$user->id), $user->username);?>
                 <td><?=md5($user->password)?></td>
                 
                 <td>
@@ -27,4 +29,5 @@
             <?php endforeach; ?>
         </tbody>    
     </table>
+<?php endif; ?>
 <?php endif; ?>

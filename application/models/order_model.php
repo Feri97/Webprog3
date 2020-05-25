@@ -1,6 +1,6 @@
 <?php
 
-class Delivery_address_model extends CI_Model{
+class order_model extends CI_Model{
     public function __construct(){
         parent::__construct();
         
@@ -9,7 +9,7 @@ class Delivery_address_model extends CI_Model{
     
     public function get_list(){
         $this->db->select('*');
-        $this->db->from('delivery_address');
+        $this->db->from('orders');
         $this->db->order_by('name','ASC');
         
         $query = $this->db->get();
@@ -17,29 +17,19 @@ class Delivery_address_model extends CI_Model{
         return $result;
     }
     
-    public function update($id, $city, $postal_code, $address, $phone_number, $name){
-        $record = [
-            'city'  =>  $city,
-            'postal_code'  =>  $postal_code,
-            'address'  =>  $address,
-            'phone_number'  =>  $phone_number,
-            'name'  =>  $name
-        ];
-        $this->db->where('id',$id);
-        return $this->db->update('delivery_address',$record);
-    }
     
     public function select_by_id($id){
         $this->db->select("*");
-        $this->db->from('delivery_address');
+        $this->db->from('orders');
         $this->db->where('id',$id);
 
         return $this->db->get()->row();
     }
     
     
-    public function insert($city, $postal_code, $address, $phone_number, $name){
+    public function insert($user, $city, $postal_code, $address, $phone_number, $name){
         $record = [
+            'user_id' => $user,
             'city'  =>  $city,
             'postal_code'  =>  $postal_code,
             'address'  =>  $address,
@@ -47,12 +37,12 @@ class Delivery_address_model extends CI_Model{
             'name'  =>  $name
         ];
         
-        return $this->db->insert('delivery_address',$record);
+        return $this->db->insert('orders',$record);
         return $this->db->insert_id();
     }
     
     public function delete($id){
         $this->db->where('id',$id);
-        return $this->db->delete('delivery_address');
+        return $this->db->delete('orders');
     }
 }

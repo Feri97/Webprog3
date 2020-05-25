@@ -7,15 +7,33 @@ class User_model extends CI_Model{
         $this->load->database();
     }
 
-    public function get_user_id($username){
+    public function username_validation($username){
         $this->db->select('*'); 
         $this->db->from('users'); 
         $this->db->where('username',$username); 
         
         $query = $this->db->get(); 
         $result = $query->result(); 
-    
-        return $result['id'];
+        
+        if($result != null){
+            return false;
+        }else{
+            return true;
+        }
+    }
+    public function email_validation($email){
+        $this->db->select('*'); 
+        $this->db->from('users'); 
+        $this->db->where('email',$email); 
+        
+        $query = $this->db->get(); 
+        $result = $query->result(); 
+        
+        if($result != null){
+            return false;
+        }else{
+            return true;
+        }
     }
     public function register($username, $password, $email){
        
@@ -29,21 +47,26 @@ class User_model extends CI_Model{
         
         return $this->db->insert_id();
     }
-    public function login($username, $password){
+    public function login($username){
        
-        $this->db->select('*'); 
+        $this->db->select('password'); 
         $this->db->from('users'); 
-        $this->db->where('username',$username);
-        $this->db->where('password',$password); 
+        $this->db->where('username',$username); 
         
         $query = $this->db->get()->row();
-
-        if($query != null){
-            return true;
-        }else{
-            return false;
-        }
+        //$result = $query->result();
+        
+        return $query;
     }
 
+    public function get_id($username){
+        $this->db->select("id");
+        $this->db->from('users');
+        $this->db->where('username',$username);
+        
+        $query = $this->db->get()->row(); 
+                        
+        return $query;
+    }
 
 }    

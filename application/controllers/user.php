@@ -12,7 +12,6 @@ class User extends CI_Controller{
 
     public function index(){
     }
-    
 	function pdf(){
 		$this->load->library('pdf');
         $this->load->helper('form');
@@ -46,6 +45,9 @@ class User extends CI_Controller{
         redirect(base_url('user/login'));
     }
     public function register(){
+        $this->load->helper('form');
+        $this->load->helper('url');
+        $this->load->view('_header');
         if($this->input->post('submit')){
 
             $this->load->library('form_validation');
@@ -55,32 +57,44 @@ class User extends CI_Controller{
 
             if($this->form_validation->run() == TRUE){
                 $this->load->helper('form');
-                $this->user_model->register($this->input->post('username'),
-                                            $this->input->post('password'),
-                                            $this->input->post('email'));
+                $username = $this->input->post('username');
+                $email = $this->input->post('email');
+                
+                if($this->user_model->username_validation($username) == true){
+                    if($this->user_model->email_validation($email) == true){
+                        $password = $this->input->post('password');
+                        $this->user_model->register($username,
+                                            password_hash($password, PASSWORD_BCRYPT),
+                                            $email);
                    
                         
-                 $this->load->helper('url');
+                        $this->load->helper('url');
                          
-                 redirect(base_url('user/login'));
+                        redirect(base_url('user/login'));
+                    }else{
+                        $view_params = [
+                            'error' =>  'Ez az e-mail cím már foglalt'
+                        ];
+                        $this->load->view('user/register', $view_params);
+                    }
+                }else{
+                    $view_params = [
+                        'error' =>  'Ez a felhasználónév már foglalt'
+                    ];
+                    $this->load->view('user/register', $view_params);
+                }
             } else{
-                $this->load->helper('url');
-                $this->load->helper('form');
+                $this->load->view('user/register');
             }
-
-
         } else{
-            $this->load->helper('url');
-            $this->load->helper('form'); 
-                    
-            //$this->load->view('products_upload/form',['errors' => '']);
+            $this->load->view('user/register', [ 'error' => '']);
         }
+        $this->load->view('_footer');
+    }
+    public function login(){
         $this->load->helper('form');
         $this->load->helper('url');
         $this->load->view('_header');
-        $this->load->view('user/register');
-    }
-    public function login(){
         if($this->input->post('submit')){
 
             $this->load->library('form_validation');
@@ -88,67 +102,76 @@ class User extends CI_Controller{
             $this->form_validation->set_rules('password','Jelszó','required|trim');
 
             if($this->form_validation->run() == TRUE){
-                $this->load->helper('form');
-                
-                if($this->user_model->login($this->input->post('username'),
-                $this->input->post('password')) == TRUE){
-                        
-                    $this->load->helper('url');
-                    
+                $data = $this->user_model->login($this->input->post('username'));
+                if($data!=null){
+                    $hash = $data->password;
+                if(password_verify($this->input->post('password'), $hash)==true){
+                                        
                     $this->load->library('session');
-                    $this->session->set_userdata('username','password');
+                    $this->session->set_userdata('username',$this->input->post('username'));
 
                     redirect(base_url('products'));
                 }
                 else{
-                    echo"Helytelen felhasználónév vagy jelszó";
+                    $view_params = [
+                        'error' =>  'Helytelen jelszó'
+                    ];
+                    $this->load->view('user/login', $view_params);
+                }
+                }
+                else{
+                    $view_params = [
+                        'error' =>  'Helytelen felhasználónév'
+                    ];
+                    $this->load->view('user/login', $view_params);
                 }
             } else{
-                $this->load->helper('url');
-                $this->load->helper('form');
+                $this->load->view('user/login');
             }
 
 
         } else{
-            $this->load->helper('url');
-            $this->load->helper('form'); 
-                    
-            //$this->load->view('products_upload/form',['errors' => '']);
+            $this->load->view('user/login', [ 'error' => '']);
         }
-        $this->load->helper('form');
-        $this->load->helper('url');
-        $this->load->view('_header');
-        $this->load->view('user/login');
+        $this->load->view('_footer');
     }
     
     public function view_cart(){
         
-        if($this->input->post('update')){
-            
-            $i = 0;
-    foreach ($this->cart->contents() as $item) {
-
-        $qty1 = count($this->input->post('qty'));
-        for ($i = 0; $i < $qty1; $i++) {
-            //echo $_POST['qty'][$i];
-            //echo $_POST['rowid1'][$i];
-            $data = array('rowid' => $_POST['rowid1'][$i], 'qty' => $_POST['qty'][$i]);
-            $this->cart->update($data);
-        }
-
-    }
-        }
         $this->load->helper('form');
         $this->load->helper('url');
         $this->load->view('_header');
+        if($this->input->post('update')){
+            
+            $i = 0;
+            foreach ($this->cart->contents() as $item) {
+                $qty1 = count($this->input->post('qty'));
+                for ($i = 0; $i < $qty1; $i++) {
+                    //echo $_POST['qty'][$i];
+                    //echo $_POST['rowid1'][$i];
+                    $data = array('rowid' => $_POST['rowid1'][$i], 'qty' => $_POST['qty'][$i]);
+                    $this->cart->update($data);
+                }
+
+            }
+            
+        }
+
         $this->load->view('user/view_cart');
+        if($this->input->post('order')){
+            
+            redirect(base_url('order/insert'));
+        }
+        $this->load->view('_footer');
     }
+
     public function remove_from_cart($rowid){
         $this->cart->remove($rowid);
         $this->load->helper('form');
         $this->load->helper('url');
         $this->load->view('_header');
         $this->load->view('user/view_cart');
+        $this->load->view('_footer');
     }
     public function destroy_cart(){
         if($this->session->userdata('username')){
@@ -164,6 +187,22 @@ class User extends CI_Controller{
         }
     }
 
+    public function generate_pdf(){
+        $this->load->helper('form');
+        $this->load->helper('url');
+        $this->load->view('user/cart_to_pdf');
 
+        $html = $this->output->get_output();
+
+        $this->load->library('pdf');
+
+        $this->dompdf->loadHtml($html);
+
+        $this->dompdf->setPaper('A4','portair');
+
+        $this->dompdf->render();
+
+        $this->dompdf->stream('számla.pdf',array('Attachment'=>0));
+    }
 
 }

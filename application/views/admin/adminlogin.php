@@ -1,5 +1,4 @@
 
-<?php echo validation_errors(); ?>
 <?php if(isset($error)):?>
     <?php echo $error; ?>
 <?php endif; ?>

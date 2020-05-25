@@ -19,19 +19,15 @@ class Admin_model extends CI_Model {
     }
 
 
-    public function login($name,$password){
+    public function login($name){
         
-        $this->db->select('*');
-        $this->db->from('admin');
-        $this->db->where('username',$name);
-        $this->db->where('password',$password);
+        $this->db->select('password'); 
+        $this->db->from('admin'); 
+        $this->db->where('username',$name); 
+        
         $query = $this->db->get()->row();
-
-        if($query != null){
-            return true;
-        }else{
-            return false;
-        }
+        
+        return $query;
 
     }
 
@@ -41,8 +37,13 @@ class Admin_model extends CI_Model {
     }
 
     
-
-
-
+    public function select_user_by_id($id){
+        $this->db->select("*");
+        $this->db->from('users');
+        $this->db->where('id',$id);
+        
+        return $this->db->get()
+                        ->row(); 
+    }
 
 }

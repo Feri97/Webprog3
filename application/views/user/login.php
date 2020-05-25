@@ -1,9 +1,10 @@
 
 <div class="list">
-<?php echo validation_errors(); ?>
+<?php if(isset($error)):?>
+    <?php echo $error; ?>
+<?php endif; ?>
 <?php echo form_open(); ?>
 <br/>
-
 <br/>
 <br/>
 

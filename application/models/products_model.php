@@ -21,8 +21,6 @@ class Products_model extends CI_Model{
     }
     
     public function update($id, $name, $description, $price){
-        $userid = $this->user_model->get_user_id($this->session->userdata('username'));
-        if($userid == $id){
             $record = [
                 'name'  =>  $name, 
                 'description'   =>  $description,
@@ -31,9 +29,7 @@ class Products_model extends CI_Model{
         
             $this->db->where('id',$id);
             return $this->db->update('products',$record);
-        }else{
-            return;
-        }
+        
     }
     
     public function select_by_id($id){
@@ -50,15 +46,6 @@ class Products_model extends CI_Model{
         $this->db->from('products');
         
         return $this->db->get()->row(); 
-    }
-
-    public function select_by_price($price){
-        $this->db->select("*");
-        $this->db->from('products');
-        $this->db->where('price',$price);
-
-        return $this->db->get()
-                        ->row(); 
     }
     
     
